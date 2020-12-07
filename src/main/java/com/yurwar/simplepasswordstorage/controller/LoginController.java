@@ -20,7 +20,29 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<Boolean> loginUser(@RequestBody UserLoginDto userLoginDto) {
+        Thread waitingTask = createWaitingTask();
+
         userService.loadUserByUsername(userLoginDto.getUsername());
+
+        waitForTask(waitingTask);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    private void waitForTask(Thread waitingTask) {
+        try {
+            waitingTask.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Thread createWaitingTask() {
+        return new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
     }
 }
