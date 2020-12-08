@@ -14,7 +14,7 @@ import java.util.Collections;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-@Table(name = "users")
+@Table(name = "auth_users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
