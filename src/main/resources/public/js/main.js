@@ -26,12 +26,17 @@ angular.module('main', ['ngRoute'])
     })
     .controller('login', function ($scope, $http, $location) {
         console.log("IN LOGIN CONTROLLER");
-        $scope.error = {};
+        $scope.error = "";
 
         $scope.credentials = {};
 
         $scope.login = function() {
-           $http.post("/login", $scope.credentials)
+            $http({
+              method: "POST",
+              url: "/login",
+              data: $.param($scope.credentials),
+              headers: { "Content-Type" : "application/x-www-form-urlencoded" }
+            })
               .then(
                 (data) => {
                   console.log(data);
@@ -39,7 +44,7 @@ angular.module('main', ['ngRoute'])
                 },
                 (error) => {
                   console.log("ERROR");
-                  $scope.error = error;
+                  $scope.error = "ERROR";
                 }
               );
         };
@@ -63,5 +68,17 @@ angular.module('main', ['ngRoute'])
         };
     })
     .controller('home', function ($scope, $http) {
+        $scope.user = {};
+
+            $http.get("/api/home")
+                    .then(
+                        (data) => {
+                            console.log(data);
+                            $scope.user = data.data;
+                        },
+                        (error) => {
+                            console.log("ERROR");
+                        }
+                    );
         console.log("IN HOME CONTROLLER");
     });

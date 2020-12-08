@@ -5,6 +5,7 @@ import com.yurwar.simplepasswordstorage.model.entity.User;
 import com.yurwar.simplepasswordstorage.model.repository.UserRepository;
 import com.yurwar.simplepasswordstorage.utils.BlockedIpException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -76,5 +77,11 @@ public class DefaultUserService implements UserService {
         User user = userRepository.findUserByUsername(userDetails.getUsername());
         user.setPassword(newPassword);
         return user;
+    }
+
+    @Override
+    public User getCurrentUser() {
+
+        return ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
     }
 }
