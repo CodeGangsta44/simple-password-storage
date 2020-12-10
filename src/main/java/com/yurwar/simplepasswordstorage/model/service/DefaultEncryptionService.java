@@ -1,6 +1,7 @@
 package com.yurwar.simplepasswordstorage.model.service;
 
 import com.yurwar.simplepasswordstorage.controller.dto.KeyDto;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.stereotype.Service;
 import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.support.VaultResponseSupport;
@@ -9,7 +10,6 @@ import javax.annotation.PostConstruct;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -35,7 +35,7 @@ public class DefaultEncryptionService implements EncryptionService {
 
             SecretKey secretKey = keyGen.generateKey();
             byte[] encodedKey = secretKey.getEncoded();
-            String baseKek = new String(Base64.getEncoder().encode(encodedKey));
+            String baseKek = new String(Hex.encode(encodedKey));
             KeyDto key = new KeyDto(baseKek);
             keyValueOperations.put(KEK_STORAGE_PATH, key);
         } catch (NoSuchAlgorithmException e) {
@@ -44,13 +44,12 @@ public class DefaultEncryptionService implements EncryptionService {
     }
 
     @Override
-    public byte[] getKeyEncryptionKey() {
-        String encodedKey = (String) Optional
+    public String getKeyEncryptionKey() {
+
+        return (String) Optional
                 .ofNullable(keyValueOperations.get(KEK_STORAGE_PATH))
                 .map(VaultResponseSupport::getData)
                 .map(dataMap -> dataMap.get("key"))
                 .orElseThrow();
-
-        return Base64.getDecoder().decode(encodedKey);
     }
 }
