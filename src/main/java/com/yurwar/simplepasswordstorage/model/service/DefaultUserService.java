@@ -2,6 +2,7 @@ package com.yurwar.simplepasswordstorage.model.service;
 
 import com.yurwar.simplepasswordstorage.controller.dto.UserRegistrationDto;
 import com.yurwar.simplepasswordstorage.model.entity.User;
+import com.yurwar.simplepasswordstorage.model.repository.EncryptedUserRepository;
 import com.yurwar.simplepasswordstorage.model.repository.UserRepository;
 import com.yurwar.simplepasswordstorage.utils.BlockedIpException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,16 @@ import static java.util.Objects.requireNonNull;
 
 @Service
 public class DefaultUserService implements UserService {
-    private final UserRepository userRepository;
+
+    private static final String KEY = "KeeyKeeyKeeyKeeyKeeyKeeyKeeyKeey";
+
+    private final EncryptedUserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     private final LoginAttemptService loginAttemptService;
 
-    public DefaultUserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+    public DefaultUserService(EncryptedUserRepository userRepository, PasswordEncoder passwordEncoder,
                               LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -43,6 +47,8 @@ public class DefaultUserService implements UserService {
             User user = User.builder()
                     .username(userDto.getUsername())
                     .password(passwordEncoder.encode(userDto.getPassword()))
+                    .address("FAKE ADDRESS")
+                    .dek(KEY)
                     .build();
             userRepository.save(user);
             return true;

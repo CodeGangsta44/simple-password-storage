@@ -30,6 +30,12 @@ public class User implements UserDetails {
     @Column
     private String password;
 
+    @Column(length = 1000)
+    private String address;
+
+    @Column(length = 1000)
+    private String dek;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptySet();
@@ -63,6 +69,22 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDek() {
+        return dek;
+    }
+
+    public void setDek(String dek) {
+        this.dek = dek;
     }
 
     public UUID getId() {
