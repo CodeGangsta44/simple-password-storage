@@ -1,6 +1,7 @@
 package com.yurwar.simplepasswordstorage.model.repository;
 
 import com.yurwar.simplepasswordstorage.model.entity.User;
+import com.yurwar.simplepasswordstorage.model.service.EncryptionService;
 import lombok.SneakyThrows;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Component;
@@ -15,14 +16,15 @@ import java.util.Objects;
 public class EncryptedUserRepository {
 
     private static final String ALGORITHM = "AES/GCM/NoPadding";
-    private static final String KEY = "KeeyKeeyKeeyKeeyKeeyKeeyKeeyKeey";
     public static final int GCM_IV_LENGTH = 12;
     public static final int GCM_TAG_LENGTH = 16;
 
     private final UserRepository userRepository;
+    private final EncryptionService encryptionService;
 
-    public EncryptedUserRepository(UserRepository userRepository) {
+    public EncryptedUserRepository(UserRepository userRepository, EncryptionService encryptionService) {
         this.userRepository = userRepository;
+        this.encryptionService = encryptionService;
     }
 
     public User findUserByUsername(String username) {
@@ -56,24 +58,24 @@ public class EncryptedUserRepository {
 
     private void encryptDek(User user) {
 
-        user.setDek(encrypt(user.getDek(), KEY));
+        user.setDek(encrypt(user.getDek(), encryptionService.getKeyEncryptionKey()));
     }
 
     private void decryptDek(User user) {
 
-        user.setDek(decrypt(user.getDek(), KEY));
+        user.setDek(decrypt(user.getDek(), encryptionService.getKeyEncryptionKey()));
     }
 
     @SneakyThrows
     private static String encrypt(String data, String key) {
-
+        byte[] keyBytes = Hex.decode(key);
         byte[] IV = new byte[GCM_IV_LENGTH];
         SecureRandom random = new SecureRandom();
         random.nextBytes(IV);
 
         Cipher cipher = Cipher.getInstance(ALGORITHM);
 
-        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "AES");
+        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
         GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, IV);
 
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
@@ -90,7 +92,7 @@ public class EncryptedUserRepository {
 
     @SneakyThrows
     private static String decrypt(String data, String key) {
-
+        byte[] keyBytes = Hex.decode(key);
         byte[] encryptedData = Hex.decode(data);
 
         byte[] IV = new byte[GCM_IV_LENGTH];
@@ -101,7 +103,7 @@ public class EncryptedUserRepository {
 
         Cipher cipher = Cipher.getInstance(ALGORITHM);
 
-        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "AES");
+        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
         GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, IV);
 
         cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmParameterSpec);
