@@ -47,7 +47,7 @@ public class DefaultUserService implements UserService {
             User user = User.builder()
                     .username(userDto.getUsername())
                     .password(passwordEncoder.encode(userDto.getPassword()))
-                    .address("FAKE ADDRESS")
+                    .address(userDto.getAddress())
                     .dek(KEY)
                     .build();
             userRepository.save(user);

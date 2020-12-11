@@ -1,6 +1,7 @@
 package com.yurwar.simplepasswordstorage.controller;
 
 import com.yurwar.simplepasswordstorage.controller.dto.UserDto;
+import com.yurwar.simplepasswordstorage.model.entity.User;
 import com.yurwar.simplepasswordstorage.model.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,11 @@ public class HomepageController {
     @GetMapping
     public UserDto getNameOfCurrentUser() {
 
-        return UserDto.builder().username(userService.getCurrentUser().getUsername()).build();
+        User user = userService.getCurrentUser();
+
+        return UserDto.builder()
+                .username(user.getUsername())
+                .address(user.getAddress())
+                .build();
     }
 }
