@@ -36,22 +36,6 @@ public class LoginFilter extends OncePerRequestFilter {
         }
     }
 
-//    @Override
-//    public void doFilter( servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-//
-//        Thread waitingTask = createWaitingTask();
-//
-//        waitingTask.start();
-//
-//        filterChain.doFilter(servletRequest, servletResponse);
-//
-//        try {
-//            waitingTask.join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     private Thread createWaitingTask() {
         return new Thread(() -> {
             try {

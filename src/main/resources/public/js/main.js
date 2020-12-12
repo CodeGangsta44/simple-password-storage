@@ -21,7 +21,21 @@ angular.module('main', ['ngRoute'])
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 
     })
-    .controller('navigation', function ($scope, $http) {
+    .controller('navigation', function ($scope, $http, $location) {
+        // $scope.user = {};
+
+        $http.get("/api/home")
+            .then(
+                (data) => {
+                    $location.path("/home");
+                    // console.log(data);
+                    // $scope.user = data.data;
+                },
+                (error) => {
+                    // window.location.href = '/login';
+                    console.log("ERROR");
+                }
+            );
         console.log("IN NAVIGATION CONTROLLER");
     })
     .controller('login', function ($scope, $http, $location) {
@@ -59,7 +73,7 @@ angular.module('main', ['ngRoute'])
                 .then(
                     (data) => {
                         console.log(data);
-                        $location.path("/login");
+                        window.location.href = '/login';
                     },
                     (error) => {
                         console.log("ERROR");
