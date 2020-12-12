@@ -11,3 +11,5 @@ on following files:
 * [Password storage features](PASSWORD_STORAGE.md)
   
 * [Sensitive information features](CRYPTOGRAPHIC_STORAGE.md)
+
+* [TLS configuration](TLS.md)

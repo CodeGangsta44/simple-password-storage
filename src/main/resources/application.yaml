@@ -9,3 +9,15 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+
+
+server:
+  ssl:
+    enabled-protocols: TLSv1.3
+    key-store: classpath:server.jks
+    key-store-type: PKCS12
+    key-store-password: ${SERVER_STORE_PASS}
+    key-password: ${SERVER_KEY_PASS}
+    key-alias: localhost
+    ciphers: TLS_AES_256_GCM_SHA384
+  port: 8443
